@@ -16,3 +16,17 @@ iframe-Abhängigkeiten. Die Three.js-Lizenz liegt unverändert in THREE-LICENSE.
 
 Zum Deaktivieren nur das zusätzliche Script-Tag in `suche/index.html`
 auskommentieren. Es muss kein bestehender Suchcode entfernt oder ersetzt werden.
+
+## Bearbeitbare Quellen
+
+Die Modell-, Bewegungs-, Plüsch- und Tropfenquellen liegen vollständig unter
+`Eli/source/`. Zum Neubauen mit Node.js:
+
+```sh
+npm ci --prefix Eli
+npm run build --prefix Eli
+```
+
+Die Entwicklungsabhängigkeiten sind auf Three.js 0.170.0 und esbuild 0.27.0
+festgelegt. Das erzeugte klassische Bundle benötigt zur Laufzeit weder npm noch
+externe Dienste; GitHub Pages liefert nur die statischen Dateien aus.
