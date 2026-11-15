@@ -215,9 +215,11 @@ const tip = new THREE.Group(); head.add(tip);
 plush(oval(tip, [0, 0, 0], [.133, .12, .045]),{density:[55,50],length:.012});
 for (const side of [-1, 1]) oval(tip, [side * .046, 0, .043], [.025, .034, .010], darkSkin);
 oval(tip, [0, .09, .01], [.038, .055, .045]);
-const rest = [[0,-.01,.72],[0,-.38,1.06],[.12,-.70,1.34],[.39,-.55,1.56],[.54,-.20,1.62]];
-const down = [[0, -.01, .68], [0, -.6, .99], [.08, -1.5, 1.09], [.12, -2.4, 1.30], [.04, -2.96, 1.60]];
-const aim = [[0, -.01, .68], [0, -.34, 1.09], [0, -.48, 1.53], [0, -.22, 1.97], [0, .12, 2.37]];
+// Keep the open root ring buried in the head in every pose, including profile.
+const trunkRoot = [0, -.01, .50];
+const rest = [trunkRoot,[0,-.38,1.06],[.12,-.70,1.34],[.39,-.55,1.56],[.54,-.20,1.62]];
+const down = [trunkRoot, [0, -.6, .99], [.08, -1.5, 1.09], [.12, -2.4, 1.30], [.04, -2.96, 1.60]];
+const aim = [trunkRoot, [0, -.34, 1.09], [0, -.48, 1.53], [0, -.22, 1.97], [0, .12, 2.37]];
 const curvePoints = rest.map(p => V(...p)); const trunkCurve = new THREE.CatmullRomCurve3(curvePoints);
 const up = V(0, 1, 0), axis = new THREE.Vector3(), binormal = new THREE.Vector3(), point = new THREE.Vector3(), tangent = new THREE.Vector3();
 function animateTrunk(t, lower, raise, spray) {
@@ -380,7 +382,12 @@ function frame(now) {
     eye.scale.y=1-.91*blink;
   });
   const goodbye=smooth(18.9,19.25,t)*(1-smooth(19.9,20.2,t));
-  arms[1].rotation.z += (-.95+Math.sin(t*10)*.09)*goodbye -1.15*hello + Math.sin(t*9)*.08*hello - .23*giggle;
+  const wave = Math.max(hello, goodbye);
+  // Wave outwards and just in front of the ear instead of across the body.
+  arms[1].position.x = .70 + .06*wave;
+  arms[1].position.z = -.04 + .22*wave;
+  arms[1].rotation.x -= .12*wave;
+  arms[1].rotation.z += (1.35+Math.sin(t*10)*.16)*goodbye + (1.35+Math.sin(t*9)*.16)*hello - .23*giggle;
   arms[0].rotation.z += .17*giggle;
   head.rotation.x = .075 * smooth(6.4, 7.8, t) * (1 - smooth(10.4, 11.7, t)) - .035 * smooth(11, 12.2, t);
   ears.forEach((ear, i) => { const side = i ? 1 : -1; ear.rotation.y = side * (.10 + Math.sin(t * 1.8 + i * .2) * .075 + smooth(11.7, 12.2, t) * .12 * (1 - smooth(14.3, 15.5, t))); ear.rotation.z = side * Math.sin(t * 1.4) * .018; });
